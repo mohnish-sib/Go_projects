@@ -28,6 +28,34 @@ func getMovies(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(movies)
 }
 
+func deleteMovie(w http.ResponseWriter,r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	params:=mux.Vars(r)
+
+	for index, item := range movies {
+		if item.ID == params["id"] {
+			movies = append(movies[:index], movies[index+1:]...)//we are taking all movies before the index and all movies after the index expect which we have to delete
+			break
+		}
+	}
+}
+
+func getMovie(w http.ResponseWriter, r *http.Request){
+	w.Header().Set("Content-Type","application/json")
+	id:=mux.Vars(r)["id"]
+
+	movie:=Movie{}
+
+	for index, item := range movies {
+		if item.ID == id {
+			movie = movies[index] 
+			break
+		}
+	}
+
+	json.NewEncoder(w).Encode(movie)
+}
+
 func main(){
 	r:=mux.NewRouter()
  
@@ -35,10 +63,10 @@ func main(){
 	movies =append(movies, Movie{ID:"2",Isbn: "443",Title: "Movie two",Director: &Director{Firstname:"Mohnish", Lastname:"Lokhande"}}) 
 
 	r.HandleFunc("/movies",getMovies).Methods("GET")
-	// r.HandleFunc("/movies/{id}",getMovie).Methods("GET")
+	r.HandleFunc("/movies/{id}",getMovie).Methods("GET")
 	// r.HandleFunc("/movies",createMovie).Methods("POST")
 	// r.HandleFunc("/movies/{id}",updateMovie).Methods("PUT")
-	// r.HandleFunc("/movies/{id}",deleteMovie).Methods("DELETE")
+	r.HandleFunc("/movies/{id}",deleteMovie).Methods("DELETE")
 
 	fmt.Printf("Starting server at 8080\n")
 	log.Fatal(http.ListenAndServe(":8080",r))
