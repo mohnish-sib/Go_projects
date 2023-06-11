@@ -1,6 +1,6 @@
-##$ Build slackbot
+### Build slackbot
 
-1st step
+1st step:
 Go to: api.slack.com/apps
 
 2nd step:
